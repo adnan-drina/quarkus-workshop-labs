@@ -43,7 +43,7 @@ public class PersonResource {
     @Path("/{name}")
     @Produces(MediaType.APPLICATION_JSON)
     public CompletionStage<Person> addPerson(@PathParam("name") String name) {
-        return bus.<Person>send("add-person", name) 
+        return bus.<Person>request("add-person", name) 
           .thenApply(Message::body); 
     }
 
