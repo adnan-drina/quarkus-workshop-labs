@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.acme.people.service.GreetingService;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,8 @@ public class GreetingResource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     @Path("/greeting/{name}")
+    // Custom APP Metrics to count the number of times we’ve greeted someone
+    @Counted(name = "greetings", description = "How many greetings we've given.")
     public String greeting(@PathParam("name") String name) {
         return service.greeting(name);
     }

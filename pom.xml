@@ -94,11 +94,6 @@
       <artifactId>quarkus-rest-client</artifactId>
       <version>${quarkus.version}</version>
     </dependency>
-    <!-- <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-smallrye-jwt</artifactId>
-      <version>${quarkus.version}</version>
-    </dependency> -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-oidc</artifactId>

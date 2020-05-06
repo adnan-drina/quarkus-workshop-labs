@@ -13,6 +13,7 @@ import io.quarkus.vertx.ConsumeEvent;
 @ApplicationScoped
 public class PersonService {
 
+     // Consuming events from add-persone address
     @ConsumeEvent(value = "add-person", blocking = true) 
     @Transactional
     public Person addPerson(String name) {
@@ -22,7 +23,9 @@ public class PersonService {
         p.birth = birth;
         p.eyes = color;
         p.name = name;
+        // A new Person entity is created and persisted
         Person.persist(p); 
+        // The return value is used as response to the incoming message
         return p; 
     }
 

@@ -16,18 +16,23 @@ public class DataTable implements Serializable {
 
     }
 
+    // The async processing record id
     public void setDraw(int draw) {
         this.draw = draw;
     }
+    // Total records in database
     public void setRecordsTotal(long recordsTotal) {
         this.recordsTotal = recordsTotal;
     }
+    // Total records that match filtering criteria
     public void setRecordsFiltered(long recordsFiltered) {
         this.recordsFiltered = recordsFiltered;
     }
+    // The actual array of records
     public void setData(List<Person> data) {
         this.data = data;
     }
+    // Error string, if any
     public void setError(String error) {
         this.error = error;
     }

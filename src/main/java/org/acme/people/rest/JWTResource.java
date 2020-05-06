@@ -19,16 +19,22 @@ import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 @Path("/secured")
+// Adds a @RequestScoped as Quarkus uses a default scoping of ApplicationScoped and this 
+// will produce undesirable behavior since JWT claims are naturally request scoped.
 @RequestScoped 
 public class JWTResource {
 
+    // JsonWebToken provides access to the claims associated with the incoming authenticated JWT token
     @Inject
     JsonWebToken jwt;  
 
+    // When using JWT Authentication, claims encoded in tokens can be @Injected into class for convenient access.
     @Inject
     @Claim(standard = Claims.iss)
     Optional<JsonString> issuer; 
 
+    // The /me and /me/admin endpoints demonstrate how to access the security context for Quarkus apps secured with JWT. 
+    // Here we are using a @RolesAllowed annotation to make sure that only users granted a specific role can access the endpoint.
     @GET
     @Path("/me")
     @RolesAllowed("user")
@@ -51,6 +57,7 @@ public class JWTResource {
 
         final StringBuilder helloReply = new StringBuilder(String.format("hello %s, isSecure: %s, authScheme: %s, hasJWT: %s\n", name, ctx.isSecure(), ctx.getAuthenticationScheme(), hasJWT));
         if (hasJWT && (jwt.getClaimNames() != null)) {
+            // Use of injected JWT Claim to print the all the claims
             helloReply.append("Injected issuer: [" + issuer.get() + "]\n"); 
             jwt.getClaimNames().forEach(n -> {
                 helloReply.append("\nClaim Name: [" + n + "] Claim Value: [" + jwt.getClaim(n) + "]");

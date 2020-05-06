@@ -8,12 +8,16 @@ import javax.ws.rs.core.MediaType;
 
 import io.quarkus.security.identity.SecurityIdentity;
 
+// Note that we do not use any @RolesAllowed.
+// It looks like an ordinary endpoint. 
+// Keycloak (the server) is the one enforcing access here, not Quarkus directly.
 @Path("/secured") 
 public class KeycloakResource {
 
+    // The SecurityIdentity is a generic object produced by the Keycloak extension that we can use 
+    // to obtain information about the security principals and attributes embedded in the request.
     @Inject
     SecurityIdentity identity; 
-
 
     @GET
     @Path("/confidential") 

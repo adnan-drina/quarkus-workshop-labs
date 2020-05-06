@@ -37,24 +37,6 @@ import io.quarkus.hibernate.orm.panache.PanacheQuery;
 @ApplicationScoped
 public class PersonResource {
 
-    @Inject EventBus bus; 
-
-    @POST
-    @Path("/{name}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public CompletionStage<Person> addPerson(@PathParam("name") String name) {
-        return bus.<Person>request("add-person", name) 
-          .thenApply(Message::body); 
-    }
-
-    @GET
-    @Path("/name/{name}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Person byName(@PathParam("name") String name) {
-        return Person.find("name", name).firstResult();
-    }
-
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Person> getAll() {
@@ -69,6 +51,7 @@ public class PersonResource {
         return Person.findByColor(color);
     }
 
+    // OpenAPI 
     @Operation(summary = "Finds people born before a specific year",
            description = "Search the people database and return a list of people born before the specified year")
     @APIResponses(value = {
@@ -125,7 +108,8 @@ public class PersonResource {
 
         }
 
-    // Add lifecycle hook
+    // Lifecycle hook
+    // pre-generate a lot of fake data
     @Transactional
     void onStart(@Observes StartupEvent ev) {
         for (int i = 0; i < 1000; i++) {
@@ -138,6 +122,28 @@ public class PersonResource {
             p.name = name;
             Person.persist(p);
         }
+    }
+
+    // Streaming data
+    // Vert.x event bus injected
+    @Inject EventBus bus; 
+
+    // Two endpoints which creates new people in our database given a name, and finds people by their name
+    @POST
+    @Path("/{name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public CompletionStage<Person> addPerson(@PathParam("name") String name) {
+        // send the name to the add-person address
+        return bus.<Person>request("add-person", name) 
+        // when we get the reply, extract the body and send this as response to the user
+          .thenApply(Message::body); 
+    }
+
+    @GET
+    @Path("/name/{name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Person byName(@PathParam("name") String name) {
+        return Person.find("name", name).firstResult();
     }
 
 }
